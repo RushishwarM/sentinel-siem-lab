@@ -1,0 +1,14 @@
+// Rule name:  User account disabled (offboarding)
+// Severity:   Informational
+// Tactic:     Impact
+// Runs every: 5 minutes
+// Lookback:   30 minutes
+// Alert when: number of results > 0
+// Entities:   Account -> DisabledAccount, Host -> Computer
+//
+// Description: Detects when an Active Directory account is disabled (EventID 4725),
+// such as during offboarding with Disable-LabUser.ps1.
+
+SecurityEvent
+| where EventID == 4725
+| project TimeGenerated, DisabledAccount = TargetAccount, DisabledBy = SubjectAccount, Computer
