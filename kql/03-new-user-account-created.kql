@@ -1,0 +1,13 @@
+// Rule name:  New user account created
+// Severity:   Low
+// Tactic:     Persistence
+// Runs every: 5 minutes
+// Lookback:   10 minutes
+// Alert when: number of results > 0
+// Entities:   Account -> NewAccount, Host -> Computer
+//
+// Description: Detects creation of a new Active Directory user account (EventID 4720).
+
+SecurityEvent
+| where EventID == 4720
+| project TimeGenerated, NewAccount = TargetAccount, CreatedBy = SubjectAccount, Computer
