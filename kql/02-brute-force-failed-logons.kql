@@ -1,0 +1,18 @@
+// Rule name:  Brute force - repeated failed logons
+// Severity:   Medium
+// Tactic:     Credential Access
+// Runs every: 5 minutes
+// Lookback:   10 minutes (first version used 1 hour and created duplicate incidents)
+// Alert when: number of results > 0
+// Entities:   Account -> TargetAccount, Host -> Computer
+//
+// Description: Detects 5 or more failed Windows logons (EventID 4625) for the
+// same account on the same host within the lookback window.
+
+SecurityEvent
+| where EventID == 4625
+| summarize FailedCount = count(),
+            FirstFail = min(TimeGenerated),
+            LastFail = max(TimeGenerated)
+    by TargetAccount, Computer
+| where FailedCount >= 5
