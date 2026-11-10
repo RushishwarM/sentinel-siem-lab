@@ -1,0 +1,16 @@
+// Check 1: is the agent alive and talking to Azure?
+Heartbeat
+| where Computer contains "DC01"
+| take 5
+
+// Check 2: which Windows security events are arriving, and how many?
+SecurityEvent
+| summarize count() by EventID
+| order by count_ desc
+
+// Check 3: the events the detection rules care about
+// 4625 = failed logon, 4720 = user created, 4725 = user disabled, 4726 = user deleted
+SecurityEvent
+| where EventID in (4625, 4720, 4725, 4726)
+| project TimeGenerated, EventID, Activity, TargetAccount, Account, Computer
+| order by TimeGenerated desc
